@@ -144,6 +144,16 @@ ENV/
 env.bak/
 venv.bak/
 
+# Keep environment templates
+!.env.production
+!.env.development
+!.env.sandbox
+
+# Docker/Podman volumes and data
+superset_home/
+redis_data/
+postgres_data/
+
 # Spyder project settings
 .spyderproject
 .spyproject
