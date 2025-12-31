@@ -50,6 +50,11 @@ class CeleryConfig:
 CELERY_CONFIG = CeleryConfig
 
 # Secret Key
+# WARNING: In production, you MUST set a strong SECRET_KEY via environment variable
+# Never use the default value in production!
+if os.getenv('SUPERSET_ENV') == 'production' and os.getenv('SUPERSET_SECRET_KEY') == 'CHANGE_THIS_TO_A_COMPLEX_RANDOM_SECRET_KEY':
+    raise ValueError("SUPERSET_SECRET_KEY must be set to a secure value in production environment!")
+
 SECRET_KEY = os.getenv('SUPERSET_SECRET_KEY', 'CHANGE_THIS_TO_A_COMPLEX_RANDOM_SECRET_KEY')
 
 # Language Configuration
@@ -81,12 +86,13 @@ AUTH_USER_REGISTRATION = True
 AUTH_USER_REGISTRATION_ROLE = 'Public'
 
 # CORS Configuration (adjust as needed for production)
+# For production, set CORS_ORIGINS environment variable to specific domains
 ENABLE_CORS = True
 CORS_OPTIONS = {
     'supports_credentials': True,
     'allow_headers': ['*'],
     'resources': ['*'],
-    'origins': ['*']
+    'origins': os.getenv('CORS_ORIGINS', '*').split(',') if os.getenv('CORS_ORIGINS') else ['*']
 }
 
 # Webserver Configuration

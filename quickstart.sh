@@ -12,10 +12,25 @@ echo ""
 # Check if docker or podman is available
 if command -v docker &> /dev/null; then
     CONTAINER_CMD="docker"
-    COMPOSE_CMD="docker-compose"
+    if command -v docker-compose &> /dev/null; then
+        COMPOSE_CMD="docker-compose"
+    elif docker compose version &> /dev/null 2>&1; then
+        COMPOSE_CMD="docker compose"
+    else
+        echo "❌ エラー: docker-composeまたはdocker composeが見つかりません"
+        echo "Error: docker-compose or docker compose not found"
+        exit 1
+    fi
 elif command -v podman &> /dev/null; then
     CONTAINER_CMD="podman"
-    COMPOSE_CMD="podman-compose"
+    if command -v podman-compose &> /dev/null; then
+        COMPOSE_CMD="podman-compose"
+    else
+        echo "❌ エラー: podman-composeがインストールされていません"
+        echo "Error: podman-compose is not installed"
+        echo "Install with: pip3 install podman-compose"
+        exit 1
+    fi
 else
     echo "❌ エラー: DockerまたはPodmanがインストールされていません"
     echo "Error: Docker or Podman is not installed"

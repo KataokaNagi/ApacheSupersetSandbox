@@ -6,7 +6,10 @@ echo "Waiting for database connection..."
 timeout=60
 counter=0
 
-until psql "${DATABASE_DIALECT}://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DB}" -c '\l' > /dev/null 2>&1; do
+# Use PGPASSWORD environment variable for security (doesn't expose password in process list)
+export PGPASSWORD="${DATABASE_PASSWORD}"
+
+until psql "host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DB} user=${DATABASE_USER}" -c '\l' > /dev/null 2>&1; do
     counter=$((counter + 1))
     if [ $counter -gt $timeout ]; then
         echo "Error: Database connection timeout after ${timeout} seconds"

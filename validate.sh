@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 # Validation Script for Apache Superset Configuration
 # 設定ファイル検証スクリプト
 

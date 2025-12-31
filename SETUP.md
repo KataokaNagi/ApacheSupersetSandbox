@@ -241,6 +241,13 @@ docker-compose --env-file .env.sandbox --profile with-local-db up -d
 - セキュリティ設定
 - 機能フラグ
 
+**重要なセキュリティ設定:**
+
+```bash
+# 本番環境でCORSを制限する場合（.envファイルに追加）
+CORS_ORIGINS=https://yourdomain.com,https://app.yourdomain.com
+```
+
 設定変更後は、コンテナを再ビルドしてください：
 
 ```bash

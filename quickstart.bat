@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 REM Quick Start Script for Apache Superset (Windows)
 REM Apache Supersetクイックスタートスクリプト (Windows版)
 
