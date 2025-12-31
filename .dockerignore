@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+README.md
+SETUP.md
+TESTING.md
+ARCHITECTURE.md
+FAQ.md
+LICENSE
+
+# Environment files
+.env*
+!.env.example
+
+# Scripts
+quickstart.sh
+quickstart.bat
+Makefile
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp
+tmp/
+temp/
