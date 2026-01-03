@@ -136,6 +136,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env.local
 .envrc
 .venv
 env/
@@ -143,6 +144,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Podman volume backups
+backups/
 
 # Spyder project settings
 .spyderproject

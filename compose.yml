@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:8.2-alpine
+    container_name: ${CONTAINER_PREFIX}-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - superset-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: ${CONTAINER_PREFIX}-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - superset-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - local
+
+  superset:
+    image: apache/superset:5.0.0
+    container_name: ${CONTAINER_PREFIX}-superset
+    restart: unless-stopped
+    environment:
+      - DATABASE_DIALECT=${DB_DIALECT}
+      - DATABASE_USER=${DB_USER}
+      - DATABASE_PASSWORD=${DB_PASSWORD}
+      - DATABASE_HOST=${DB_HOST}
+      - DATABASE_PORT=${DB_PORT}
+      - DATABASE_DB=${DB_NAME}
+      - REDIS_HOST=${CONTAINER_PREFIX}-redis
+      - REDIS_PORT=6379
+      - SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
+      - BABEL_DEFAULT_LOCALE=ja
+      - LANGUAGES={"ja":"日本語","en":"English"}
+    ports:
+      - "${SUPERSET_PORT}:8088"
+    volumes:
+      - ./superset_config.py:/app/pythonpath/superset_config.py
+      - superset_home:/app/superset_home
+    networks:
+      - superset-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "
+        superset db upgrade &&
+        superset fab create-admin --username ${ADMIN_USERNAME} --firstname ${ADMIN_FIRSTNAME} --lastname ${ADMIN_LASTNAME} --email ${ADMIN_EMAIL} --password ${ADMIN_PASSWORD} || true &&
+        superset init &&
+        gunicorn --bind 0.0.0.0:8088 --workers ${GUNICORN_WORKERS} --timeout 120 --limit-request-line 0 --limit-request-field_size 0 'superset.app:create_app()'
+      "
+
+networks:
+  superset-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+    name: ${CONTAINER_PREFIX}-redis-data
+  postgres_data:
+    name: ${CONTAINER_PREFIX}-postgres-data
+  superset_home:
+    name: ${CONTAINER_PREFIX}-superset-home
