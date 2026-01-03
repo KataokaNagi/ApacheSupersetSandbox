@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 このプロジェクトの全ての重要な変更はこのファイルに記録されます。
 
+## [1.0.1] - 2026-01-03
+
+### Fixed / 修正
+- Windows環境でquickstart.batが正しく動作しない問題を修正
+  - Docker Desktop / Podman Desktop の両方に対応
+  - `docker compose` (スペース区切り) と `docker-compose` (ハイフン) の両方に対応
+  - Podman Desktop使用時の `podman-compose` に対応
+  - より詳細なエラーメッセージを追加
+  - ビルドと起動の失敗時に適切なエラーハンドリングを追加
+
+### Added / 追加
+- `WINDOWS.md`: Windows ユーザー向けの詳細なセットアップガイドを追加
+- FAQ.md に Windows環境でのトラブルシューティングセクションを追加
+- README.md に Windows向けクイックスタート手順を追加
+
 ## [1.0.0] - 2024-12-31
 
 ### Added / 追加

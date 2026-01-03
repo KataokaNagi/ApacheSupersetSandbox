@@ -279,6 +279,45 @@ netstat -ano | findstr :8088
 
 または`.env`ファイルでポート番号を変更してください。
 
+### Q19-1: quickstart.batが起動直後に閉じてしまう（Windows）
+
+**A:** これは主にcomposeコマンドが見つからない場合に発生します：
+
+**解決方法1: Docker Desktop使用時**
+1. Docker Desktopが起動していることを確認
+2. PowerShellまたはコマンドプロンプトで以下を実行して確認：
+   ```powershell
+   docker compose version
+   ```
+3. エラーが出る場合、Docker Desktopを最新版に更新
+
+**解決方法2: Podman Desktop使用時**
+1. Podman Desktopが起動していることを確認
+2. `podman-compose`をインストール：
+   ```powershell
+   pip install podman-compose
+   ```
+3. 再度quickstart.batを実行
+
+**解決方法3: 手動実行**
+コマンドプロンプトで以下を順番に実行：
+```cmd
+cd /path/to/ApacheSupersetSandbox
+copy .env.development .env
+docker compose --env-file .env.development --profile with-local-db up -d
+```
+
+または（Podman使用時）：
+```cmd
+podman-compose --env-file .env.development --profile with-local-db up -d
+```
+
+**デバッグ方法:**
+quickstart.batの最初の行の次に以下を追加して、エラーを確認：
+```batch
+@echo on
+```
+
 ### Q20: "Database connection timeout" エラー
 
 **A:** データベース接続の問題です：
@@ -347,12 +386,31 @@ netstat -ano | findstr :8088
 
 ### Q24: Windowsで動作しますか？
 
-**A:** はい。Docker Desktop for Windowsまたは WSL2 + Docker/Podman で動作します。
+**A:** はい。Docker Desktop for WindowsまたはPodman Desktop for Windowsで動作します。
 
 推奨環境：
 - Windows 10/11 Pro/Enterprise
-- WSL2有効化
-- Docker Desktop最新版
+- WSL2有効化（Docker Desktop使用時）
+- Docker Desktop最新版、またはPodman Desktop最新版
+
+**Podman Desktop使用時の注意:**
+Podman Desktopを使用する場合、`podman-compose`のインストールが必要です：
+
+```powershell
+# PowerShellで実行
+pip install podman-compose
+```
+
+または、Pythonがインストールされていない場合：
+```powershell
+# pipxを使用する方法
+pipx install podman-compose
+```
+
+**quickstart.batが動作しない場合:**
+1. コマンドプロンプトまたはPowerShellを管理者として実行
+2. `docker compose version` または `podman compose version` を実行して、コマンドが利用可能か確認
+3. エラーメッセージを確認して、Composeツールが正しくインストールされているか確認
 
 ### Q25: 商用利用は可能ですか？
 

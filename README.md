@@ -4,18 +4,27 @@ Apache Superset 5.0をPodman/Dockerで簡単にセットアップするための
 
 ## 🚀 クイックスタート
 
-### 開発環境の起動
+### Linux/Mac の場合
 
 ```bash
 # 環境ファイルをコピー
 cp .env.development .env
 
 # コンテナを起動
-docker-compose --profile with-local-db up -d
+docker compose --profile with-local-db up -d
 
 # または Podman を使用する場合
 podman-compose --profile with-local-db up -d
 ```
+
+### Windows の場合
+
+```cmd
+# quickstart.bat をダブルクリック、または
+quickstart.bat
+```
+
+**Windows環境の詳細は [WINDOWS.md](WINDOWS.md) をご覧ください**
 
 ブラウザで http://localhost:8088 にアクセス
 - ユーザー名: `admin`
@@ -23,7 +32,10 @@ podman-compose --profile with-local-db up -d
 
 ## 📚 詳細なドキュメント
 
-完全なセットアップガイド、環境設定、トラブルシューティングについては [SETUP.md](SETUP.md) をご覧ください。
+- **[SETUP.md](SETUP.md)** - 完全なセットアップガイド
+- **[WINDOWS.md](WINDOWS.md)** - Windows ユーザー向けガイド
+- **[FAQ.md](FAQ.md)** - よくある質問とトラブルシューティング
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - システムアーキテクチャ
 
 ## 🌟 機能
 

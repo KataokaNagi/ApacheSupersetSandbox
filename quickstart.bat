@@ -8,16 +8,69 @@ echo Apache Superset クイックスタート
 echo =================================================
 echo.
 
-REM Check if docker is available
+REM Detect available container runtime and compose command
+set CONTAINER_CMD=
+set COMPOSE_CMD=
+
+REM Check for Docker
 where docker >nul 2>nul
-if %ERRORLEVEL% NEQ 0 (
-    echo ❌ エラー: Dockerがインストールされていません
-    echo Error: Docker is not installed
+if %ERRORLEVEL% EQU 0 (
+    set CONTAINER_CMD=docker
+    REM Try docker compose (modern Docker Desktop)
+    docker compose version >nul 2>nul
+    if !ERRORLEVEL! EQU 0 (
+        set COMPOSE_CMD=docker compose
+    ) else (
+        REM Try docker-compose (legacy)
+        where docker-compose >nul 2>nul
+        if !ERRORLEVEL! EQU 0 (
+            set COMPOSE_CMD=docker-compose
+        )
+    )
+)
+
+REM Check for Podman if Docker not found
+if "!CONTAINER_CMD!"=="" (
+    where podman >nul 2>nul
+    if !ERRORLEVEL! EQU 0 (
+        set CONTAINER_CMD=podman
+        REM Try podman compose
+        podman compose version >nul 2>nul
+        if !ERRORLEVEL! EQU 0 (
+            set COMPOSE_CMD=podman compose
+        ) else (
+            REM Try podman-compose
+            where podman-compose >nul 2>nul
+            if !ERRORLEVEL! EQU 0 (
+                set COMPOSE_CMD=podman-compose
+            )
+        )
+    )
+)
+
+REM Verify we found something
+if "!CONTAINER_CMD!"=="" (
+    echo ❌ エラー: DockerまたはPodmanがインストールされていません
+    echo Error: Docker or Podman is not installed
+    echo.
+    echo Docker Desktop: https://www.docker.com/products/docker-desktop
+    echo Podman Desktop: https://podman-desktop.io/
     pause
     exit /b 1
 )
 
-echo ✅ コンテナランタイム: Docker
+if "!COMPOSE_CMD!"=="" (
+    echo ❌ エラー: Compose コマンドが見つかりません
+    echo Error: Compose command not found
+    echo.
+    echo Docker Desktop の場合は "docker compose" が含まれています
+    echo Podman の場合は "pip install podman-compose" を実行してください
+    pause
+    exit /b 1
+)
+
+echo ✅ コンテナランタイム: !CONTAINER_CMD!
+echo ✅ Compose コマンド: !COMPOSE_CMD!
 echo.
 
 REM Select environment
@@ -81,11 +134,30 @@ if not exist .env (
 
 echo.
 echo 🔨 コンテナをビルドしています...
-docker-compose --env-file "%ENV_FILE%" build
+!COMPOSE_CMD! --env-file "!ENV_FILE!" build
+if !ERRORLEVEL! NEQ 0 (
+    echo ❌ エラー: ビルドに失敗しました
+    echo Error: Build failed
+    pause
+    exit /b 1
+)
 
 echo.
 echo 🚀 コンテナを起動しています...
-docker-compose --env-file "%ENV_FILE%" %PROFILE% up -d
+if "!PROFILE!"=="" (
+    !COMPOSE_CMD! --env-file "!ENV_FILE!" up -d
+) else (
+    !COMPOSE_CMD! --env-file "!ENV_FILE!" !PROFILE! up -d
+)
+if !ERRORLEVEL! NEQ 0 (
+    echo ❌ エラー: コンテナの起動に失敗しました
+    echo Error: Failed to start containers
+    echo.
+    echo ログを確認してください:
+    echo   !COMPOSE_CMD! --env-file !ENV_FILE! logs
+    pause
+    exit /b 1
+)
 
 echo.
 echo ⏳ サービスの起動を待っています...
@@ -105,12 +177,12 @@ if "%choice%"=="3" (
 )
 echo.
 echo ログの確認:
-echo   docker-compose --env-file %ENV_FILE% logs -f
+echo   !COMPOSE_CMD! --env-file !ENV_FILE! logs -f
 echo.
 echo 停止方法:
-echo   docker-compose --env-file %ENV_FILE% down
+echo   !COMPOSE_CMD! --env-file !ENV_FILE! down
 echo.
 echo 完全削除（データも削除）:
-echo   docker-compose --env-file %ENV_FILE% down -v
+echo   !COMPOSE_CMD! --env-file !ENV_FILE! down -v
 echo =================================================
 pause
