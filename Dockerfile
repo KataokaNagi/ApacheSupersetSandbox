@@ -11,6 +11,6 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python packages using uv (Superset 5.0 package manager)
-RUN uv pip install psycopg2-binary authlib mysqlclient
+RUN uv pip install psycopg2-binary authlib mysqlclient pillow
 
 USER superset
