@@ -5,7 +5,7 @@ echo Apache Superset サンドボックス環境 停止
 echo ======================================
 echo.
 
-powershell -Command "podman compose --env-file env\.env.sandbox down"
+powershell -Command "podman compose --env-file ..\..\env\.env.sandbox down"
 
 if %ERRORLEVEL% EQU 0 (
     echo.

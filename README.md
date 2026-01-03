@@ -8,22 +8,22 @@ Apache Superset 5.0系、Redis 8.2系、PostgreSQL 16系を利用したPodman環
 - **コンテナプレフィックス**: `superset-prod`
 - **Supersetポート**: 8088
 - **データベース**: 外部Azure PostgreSQL
-- **起動コマンド**: `start-production.bat`
-- **停止コマンド**: `stop-production.bat`
+- **起動コマンド**: `scripts\production\start.bat`
+- **停止コマンド**: `scripts\production\stop.bat`
 
 ### 開発環境 (Development)
 - **コンテナプレフィックス**: `superset-dev`
 - **Supersetポート**: 8088
 - **データベース**: ローカルPostgreSQL (コンテナ)
-- **起動コマンド**: `start-development.bat`
-- **停止コマンド**: `stop-development.bat`
+- **起動コマンド**: `scripts\development\start.bat`
+- **停止コマンド**: `scripts\development\stop.bat`
 
 ### 開発サンドボックス環境 (Sandbox)
 - **コンテナプレフィックス**: `superset-sandbox`
 - **Supersetポート**: 8089
 - **データベース**: ローカルPostgreSQL (コンテナ)
-- **起動コマンド**: `start-sandbox.bat`
-- **停止コマンド**: `stop-sandbox.bat`
+- **起動コマンド**: `scripts\sandbox\start.bat`
+- **停止コマンド**: `scripts\sandbox\stop.bat`
 
 ## 前提条件
 
@@ -35,7 +35,7 @@ Apache Superset 5.0系、Redis 8.2系、PostgreSQL 16系を利用したPodman環
 
 ### 1. 本番環境の設定
 
-`.env.production`ファイルを編集し、以下の項目を変更してください：
+`env\.env.production`ファイルを編集し、以下の項目を変更してください：
 
 ```env
 # Azure PostgreSQL接続情報
@@ -58,13 +58,13 @@ SUPERSET_SECRET_KEY=your_random_secret_key_here
 
 ```cmd
 # 本番環境
-start-production.bat
+scripts\production\start.bat
 
 # 開発環境
-start-development.bat
+scripts\development\start.bat
 
 # サンドボックス環境
-start-sandbox.bat
+scripts\sandbox\start.bat
 ```
 
 ### 3. アクセス
@@ -77,10 +77,10 @@ start-sandbox.bat
 
 ### 4. ログイン情報
 
-各環境の`.env.*`ファイルで設定した以下の情報でログイン：
+各環境の`env\.env.*`ファイルで設定した以下の情報でログイン：
 
 - ユーザー名: `admin` (デフォルト)
-- パスワード: `.env.*`の`ADMIN_PASSWORD`で設定した値
+- パスワード: `env\.env.*`の`ADMIN_PASSWORD`で設定した値
 
 ## 言語設定
 
@@ -93,16 +93,21 @@ Supersetは日本語がデフォルト言語として設定されています。
 ```
 .
 ├── compose.yml                 # Podman Compose設定ファイル
-├── .env.production            # 本番環境変数
-├── .env.development           # 開発環境変数
-├── .env.sandbox               # サンドボックス環境変数
 ├── superset_config.py         # Superset設定ファイル
-├── start-production.bat       # 本番環境起動スクリプト
-├── start-development.bat      # 開発環境起動スクリプト
-├── start-sandbox.bat          # サンドボックス環境起動スクリプト
-├── stop-production.bat        # 本番環境停止スクリプト
-├── stop-development.bat       # 開発環境停止スクリプト
-└── stop-sandbox.bat           # サンドボックス環境停止スクリプト
+├── env/                       # 環境変数ディレクトリ
+│   ├── .env.production        # 本番環境変数
+│   ├── .env.development       # 開発環境変数
+│   └── .env.sandbox           # サンドボックス環境変数
+└── scripts/                   # 起動・停止スクリプト
+    ├── production/
+    │   ├── start.bat          # 本番環境起動
+    │   └── stop.bat           # 本番環境停止
+    ├── development/
+    │   ├── start.bat          # 開発環境起動
+    │   └── stop.bat           # 開発環境停止
+    └── sandbox/
+        ├── start.bat          # サンドボックス環境起動
+        └── stop.bat           # サンドボックス環境停止
 ```
 
 ## トラブルシューティング
@@ -124,7 +129,7 @@ podman logs superset-sandbox-superset
 
 ### ポートが既に使用されている
 
-他のアプリケーションがポートを使用している場合、`.env.*`ファイルの`SUPERSET_PORT`を変更してください。
+他のアプリケーションがポートを使用している場合、`env\.env.*`ファイルの`SUPERSET_PORT`を変更してください。
 
 ## メンテナンスコマンド
 
@@ -150,10 +155,10 @@ podman volume rm superset-dev-postgres-data
 
 ⚠️ **本番環境では必ず以下を変更してください:**
 
-1. `.env.production`の`SUPERSET_SECRET_KEY`をランダムな文字列に変更
+1. `env\.env.production`の`SUPERSET_SECRET_KEY`をランダムな文字列に変更
 2. `ADMIN_PASSWORD`を強力なパスワードに変更
 3. Azure PostgreSQLのパスワードを安全に管理
-4. `.env.*`ファイルをGitにコミットしない（`.gitignore`に追加済み）
+4. `env\.env.*`ファイルをGitにコミットしない（`.gitignore`に追加済み）
 
 ## ライセンス
 

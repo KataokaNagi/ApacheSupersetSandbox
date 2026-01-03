@@ -34,20 +34,20 @@ if %ERRORLEVEL% NEQ 0 (
 )
 echo.
 
-powershell -Command "podman compose --env-file env\.env.development up -d"
+powershell -Command "podman compose --env-file ..\..\env\.env.development up -d"
 
 if %ERRORLEVEL% EQU 0 (
     echo.
-    echo �? 開発環�?が正常に起動しました
+    echo ✓ 開発環境が正常に起動しました
     echo.
     echo アクセスURL: http://localhost:8088
-    echo コン�?ナ名プレフィ�?クス: superset-dev
+    echo コンテナ名プレフィックス: superset-dev
     echo.
-    echo コン�?ナ状態確�?:
+    echo コンテナ状態確認:
     powershell -Command "podman ps --filter 'name=superset-dev'"
 ) else (
     echo.
-    echo �? エラーが発生しました
+    echo ✗ エラーが発生しました
 )
 
 echo.
