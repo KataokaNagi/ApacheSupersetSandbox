@@ -36,7 +36,9 @@ services:
       - local
 
   superset:
-    image: apache/superset:5.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: ${CONTAINER_PREFIX}-superset
     restart: unless-stopped
     environment:
