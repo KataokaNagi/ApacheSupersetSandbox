@@ -38,7 +38,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 echo.
 
-powershell -Command "podman compose --env-file .env.sandbox up -d"
+powershell -Command "podman compose --env-file env\.env.sandbox up -d"
 
 if %ERRORLEVEL% EQU 0 (
     echo.

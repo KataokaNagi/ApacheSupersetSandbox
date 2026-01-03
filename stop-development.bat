@@ -5,7 +5,7 @@ echo Apache Superset 開発環境 停止
 echo ======================================
 echo.
 
-powershell -Command "podman compose --env-file .env.development down"
+powershell -Command "podman compose --env-file env\.env.development down"
 
 if %ERRORLEVEL% EQU 0 (
     echo.

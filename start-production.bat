@@ -34,7 +34,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 echo.
 
-powershell -Command "podman compose --env-file .env.production up -d"
+powershell -Command "podman compose --env-file env\.env.production up -d"
 
 if %ERRORLEVEL% EQU 0 (
     echo.
