@@ -134,15 +134,14 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Environments
-.env
+# Environments（ルートの.envのみ除外、env/ディレクトリは許可）
+/.env
 .env.local
 .env.production
 env/.env.production
 .envrc
 .venv
 venv/
-ENV/
 env.bak/
 venv.bak/
 
