@@ -8,22 +8,22 @@ Apache Superset 5.0系、Redis 8.2系、PostgreSQL 16系を利用したPodman環
 - **コンテナプレフィックス**: `superset-prod`
 - **Supersetポート**: 8088
 - **データベース**: 外部Azure PostgreSQL
-- **起動コマンド**: `scripts\production\start.bat`
-- **停止コマンド**: `scripts\production\stop.bat`
+- **起動コマンド**: `scripts\production\up.bat`
+- **停止コマンド**: `scripts\production\down.bat`
 
 ### 開発環境 (Development)
 - **コンテナプレフィックス**: `superset-dev`
 - **Supersetポート**: 8088
 - **データベース**: ローカルPostgreSQL (コンテナ)
-- **起動コマンド**: `scripts\development\start.bat`
-- **停止コマンド**: `scripts\development\stop.bat`
+- **起動コマンド**: `scripts\development\up.bat`
+- **停止コマンド**: `scripts\development\down.bat`
 
 ### 開発サンドボックス環境 (Sandbox)
 - **コンテナプレフィックス**: `superset-sandbox`
 - **Supersetポート**: 8089
 - **データベース**: ローカルPostgreSQL (コンテナ)
-- **起動コマンド**: `scripts\sandbox\start.bat`
-- **停止コマンド**: `scripts\sandbox\stop.bat`
+- **起動コマンド**: `scripts\sandbox\up.bat`
+- **停止コマンド**: `scripts\sandbox\down.bat`
 
 ## 前提条件
 
@@ -58,13 +58,13 @@ SUPERSET_SECRET_KEY=your_random_secret_key_here
 
 ```cmd
 # 本番環境
-scripts\production\start.bat
+scripts\production\up.bat
 
 # 開発環境
-scripts\development\start.bat
+scripts\development\up.bat
 
 # サンドボックス環境
-scripts\sandbox\start.bat
+scripts\sandbox\up.bat
 ```
 
 ### 3. アクセス
@@ -100,14 +100,14 @@ Supersetは日本語がデフォルト言語として設定されています。
 │   └── .env.sandbox           # サンドボックス環境変数
 └── scripts/                   # 起動・停止スクリプト
     ├── production/
-    │   ├── start.bat          # 本番環境起動
-    │   └── stop.bat           # 本番環境停止
+    │   ├── up.bat             # 本番環境起動
+    │   └── down.bat           # 本番環境停止
     ├── development/
-    │   ├── start.bat          # 開発環境起動
-    │   └── stop.bat           # 開発環境停止
+    │   ├── up.bat             # 開発環境起動
+    │   └── down.bat           # 開発環境停止
     └── sandbox/
-        ├── start.bat          # サンドボックス環境起動
-        └── stop.bat           # サンドボックス環境停止
+        ├── up.bat             # サンドボックス環境起動
+        └── down.bat           # サンドボックス環境停止
 ```
 
 ## トラブルシューティング
