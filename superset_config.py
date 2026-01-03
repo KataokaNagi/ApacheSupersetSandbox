@@ -47,6 +47,12 @@ DATA_CACHE_CONFIG = {
     'CACHE_REDIS_DB': 3,
 }
 
+# レート制限設定（Redisバックエンド使用）
+from flask_limiter.util import get_remote_address
+
+RATELIMIT_ENABLED = True
+RATELIMIT_STORAGE_URI = f'redis://{REDIS_HOST}:{REDIS_PORT}/4'
+
 # 言語設定
 BABEL_DEFAULT_LOCALE = os.getenv('BABEL_DEFAULT_LOCALE', 'ja')
 
