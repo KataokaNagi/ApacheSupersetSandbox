@@ -73,6 +73,10 @@ echo Default login: admin / admin
 echo ========================================
 echo.
 
+echo [INFO] Stopping existing containers...
+%CONTAINER_RUNTIME% compose --env-file env/.env.local --profile local down >nul 2>&1
+echo.
+
 %CONTAINER_RUNTIME% compose --env-file env/.env.local --profile local up -d
 
 if %ERRORLEVEL% EQU 0 (

@@ -33,7 +33,9 @@ if %ERRORLEVEL% NEQ 0 (
     echo ✓ Podman マシンは既に起動しています
 )
 echo.
-
+echo 既存のコンテナを停止中...
+powershell -Command "podman compose --env-file ..\.\..\env\.env.development down" >nul 2>&1
+echo.
 powershell -Command "podman compose --env-file ..\..\env\.env.development up -d"
 
 if %ERRORLEVEL% EQU 0 (
