@@ -1,0 +1,178 @@
+# Apache Superset 6.0.0 Docker Compose Configuration
+# ローカル開発環境とAzureクラウド環境で切り替え可能
+
+services:
+  # Redis - メッセージブローカー & キャッシュ
+  redis:
+    image: redis:7.4-alpine
+    container_name: ${CONTAINER_PREFIX}-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - superset-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL - メタデータデータベース (ローカル開発用)
+  postgres:
+    image: postgres:16-alpine
+    container_name: ${CONTAINER_PREFIX}-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - superset-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - local
+
+  # Superset Web Application
+  superset:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${CONTAINER_PREFIX}-superset
+    restart: unless-stopped
+    environment:
+      # Database Configuration
+      - DATABASE_DIALECT=${DATABASE_DIALECT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_DB=${DATABASE_DB}
+      # Redis Configuration
+      - REDIS_HOST=${CONTAINER_PREFIX}-redis
+      - REDIS_PORT=6379
+      - REDIS_CELERY_DB=0
+      - REDIS_RESULTS_DB=1
+      # Superset Configuration
+      - SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
+      - SUPERSET_LOAD_EXAMPLES=${SUPERSET_LOAD_EXAMPLES:-false}
+      # Localization
+      - BABEL_DEFAULT_LOCALE=${BABEL_DEFAULT_LOCALE:-ja}
+      - LANGUAGES=${LANGUAGES:-{"ja":"日本語","en":"English"}}
+      # Feature Flags
+      - ALERT_REPORTS=${ALERT_REPORTS:-true}
+    ports:
+      - "${SUPERSET_PORT}:8088"
+    volumes:
+      - ./superset_config.py:/app/pythonpath/superset_config.py:ro
+      - superset_home:/app/superset_home
+    networks:
+      - superset-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "
+        superset db upgrade &&
+        superset fab create-admin --username ${ADMIN_USERNAME} --firstname ${ADMIN_FIRSTNAME} --lastname ${ADMIN_LASTNAME} --email ${ADMIN_EMAIL} --password ${ADMIN_PASSWORD} || true &&
+        superset init &&
+        gunicorn --bind 0.0.0.0:8088 --workers ${GUNICORN_WORKERS:-4} --timeout 120 --limit-request-line 0 --limit-request-field_size 0 'superset.app:create_app()'
+      "
+
+  # Celery Worker - 非同期タスク処理
+  superset-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${CONTAINER_PREFIX}-worker
+    restart: unless-stopped
+    environment:
+      # Database Configuration
+      - DATABASE_DIALECT=${DATABASE_DIALECT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_DB=${DATABASE_DB}
+      # Redis Configuration
+      - REDIS_HOST=${CONTAINER_PREFIX}-redis
+      - REDIS_PORT=6379
+      - REDIS_CELERY_DB=0
+      - REDIS_RESULTS_DB=1
+      # Superset Configuration
+      - SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
+      # Celery Configuration
+      - CELERYD_CONCURRENCY=${CELERYD_CONCURRENCY:-2}
+    volumes:
+      - ./superset_config.py:/app/pythonpath/superset_config.py:ro
+      - superset_home:/app/superset_home
+    networks:
+      - superset-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      superset:
+        condition: service_started
+    command: >
+      celery --app=superset.tasks.celery_app:app worker --loglevel=INFO
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Celery Beat - スケジュールタスク (Alerts & Reports用)
+  superset-worker-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${CONTAINER_PREFIX}-beat
+    restart: unless-stopped
+    environment:
+      # Database Configuration
+      - DATABASE_DIALECT=${DATABASE_DIALECT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_DB=${DATABASE_DB}
+      # Redis Configuration
+      - REDIS_HOST=${CONTAINER_PREFIX}-redis
+      - REDIS_PORT=6379
+      - REDIS_CELERY_DB=0
+      - REDIS_RESULTS_DB=1
+      # Superset Configuration
+      - SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
+    volumes:
+      - ./superset_config.py:/app/pythonpath/superset_config.py:ro
+      - superset_home:/app/superset_home
+    networks:
+      - superset-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      superset-worker:
+        condition: service_started
+    command: >
+      celery --app=superset.tasks.celery_app:app beat --loglevel=INFO
+    healthcheck:
+      disable: true
+
+networks:
+  superset-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+    name: ${CONTAINER_PREFIX}-redis-data
+  postgres_data:
+    name: ${CONTAINER_PREFIX}-postgres-data
+  superset_home:
+    name: ${CONTAINER_PREFIX}-superset-home
