@@ -83,7 +83,7 @@ services:
         superset db upgrade &&
         superset fab create-admin --username ${ADMIN_USERNAME} --firstname ${ADMIN_FIRSTNAME} --lastname ${ADMIN_LASTNAME} --email ${ADMIN_EMAIL} --password ${ADMIN_PASSWORD} || true &&
         superset init &&
-        gunicorn --bind 0.0.0.0:8088 --workers ${GUNICORN_WORKERS:-4} --timeout 120 --limit-request-line 0 --limit-request-field_size 0 'superset.app:create_app()'
+        gunicorn --bind 0.0.0.0:8088 --workers ${GUNICORN_WORKERS:-4} --timeout 300 --keep-alive 2 --limit-request-line 0 --limit-request-field_size 0 'superset.app:create_app()'
       "
 
   # Celery Worker - 非同期タスク処理

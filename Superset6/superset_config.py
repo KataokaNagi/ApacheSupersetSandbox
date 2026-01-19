@@ -46,11 +46,14 @@ SQLALCHEMY_DATABASE_URI = (
 
 # SQLAlchemy settings
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_ECHO = False
+SQLALCHEMY_COMMIT_ON_TEARDOWN = False
 SQLALCHEMY_ENGINE_OPTIONS = {
     "pool_pre_ping": True,
     "pool_recycle": 3600,
     "pool_size": 10,
     "max_overflow": 20,
+    "echo": False,
 }
 
 # =============================================================================
@@ -63,6 +66,12 @@ REDIS_RESULTS_DB = get_env_variable("REDIS_RESULTS_DB", "1")
 REDIS_CACHE_DB = get_env_variable("REDIS_CACHE_DB", "2")
 
 REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+
+# =============================================================================
+# Rate Limiting Configuration (Flask-Limiter)
+# =============================================================================
+RATELIMIT_ENABLED = True
+RATELIMIT_STORAGE_URI = f"{REDIS_URL}/{REDIS_CACHE_DB}"
 
 # =============================================================================
 # Cache Configuration
@@ -165,8 +174,15 @@ LANGUAGES = {
 # Web Server Configuration
 # =============================================================================
 SUPERSET_WEBSERVER_PORT = 8088
-SUPERSET_WEBSERVER_TIMEOUT = 60
+SUPERSET_WEBSERVER_TIMEOUT = 300  # Increased from 60 to 300 seconds
 ENABLE_PROXY_FIX = True  # Required when behind a reverse proxy (Azure, nginx)
+
+# Gunicorn Configuration
+# https://docs.gunicorn.org/en/stable/settings.html
+GUNICORN_TIMEOUT = 300
+GUNICORN_KEEPALIVE = 2
+GUNICORN_WORKERS = 4  # (2 x CPU cores) + 1
+GUNICORN_THREADS = 4
 
 # =============================================================================
 # Logging Configuration
@@ -192,6 +208,9 @@ TALISMAN_CONFIG = {
     "content_security_policy": None,  # Disable CSP for development; enable for production
     "force_https": False,  # Set True for production with HTTPS
 }
+
+# CSP警告を無効化 (開発環境用)
+CONTENT_SECURITY_POLICY_WARNING = False
 
 # CORS Configuration (Azureデプロイ時に必要な場合)
 ENABLE_CORS = True
