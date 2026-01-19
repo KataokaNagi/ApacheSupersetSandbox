@@ -55,12 +55,19 @@ RATELIMIT_STORAGE_URI = f'redis://{REDIS_HOST}:{REDIS_PORT}/4'
 
 # 言語設定
 BABEL_DEFAULT_LOCALE = os.getenv('BABEL_DEFAULT_LOCALE', 'ja')
+BABEL_DEFAULT_FOLDER = 'superset/translations'
 
-# 利用可能な言語
+# 利用可能な言語（日本語を最初に配置することで優先度を上げる）
 LANGUAGES = {
-    'en': {'flag': 'us', 'name': 'English'},
     'ja': {'flag': 'jp', 'name': '日本語'},
+    'en': {'flag': 'us', 'name': 'English'},
 }
+
+# ブラウザの言語設定を無視してデフォルトロケールを強制する
+# これにより、ブラウザの設定に関係なく日本語が適用される
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = False  # 本番環境ではTrueに設定
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 # タイムゾーン
 DEFAULT_TIME_ZONE = 'Asia/Tokyo'
