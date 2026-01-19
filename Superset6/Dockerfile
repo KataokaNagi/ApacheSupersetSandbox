@@ -116,6 +116,13 @@ PYTHON_SCRIPT
 # Verify Japanese messages.json was created
 RUN echo "=== Verifying messages.json ===" && \
     head -20 /app/superset/translations/ja/LC_MESSAGES/messages.json
+
+# Copy custom tail_js_custom_extra.html template to inject i18n runtime fix
+# This is the official way to add custom JavaScript in Superset 6.0.0
+RUN cp /app/patches/templates/tail_js_custom_extra.html /app/superset/templates/tail_js_custom_extra.html && \
+    echo "[SUCCESS] Copied tail_js_custom_extra.html template" && \
+    echo "=== Verifying tail_js_custom_extra.html ===" && \
+    head -30 /app/superset/templates/tail_js_custom_extra.html
 # =============================================================================
 # End of i18n Fix Patch
 # =============================================================================

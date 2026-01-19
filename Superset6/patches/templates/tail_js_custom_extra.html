@@ -1,0 +1,371 @@
+{#
+=============================================================================
+Superset 6.0.0 i18n Fix - Custom Tail JS Template
+=============================================================================
+
+This template injects the i18n runtime fix script.
+See: https://github.com/apache/superset/issues/34751
+
+TODO: Remove this patch when official fix is released.
+
+@version 2.3.0
+@date 2026-01-19
+=============================================================================
+#}
+
+<script>
+(function() {
+    'use strict';
+
+    // Translation dictionary - English to Japanese
+    var translations = {
+        // Chart creation panel - Control labels
+        'Dimensions': 'ディメンション',
+        'Metrics': 'メトリック',
+        'Filters': 'フィルター',
+        'Columns': '列',
+        'Ordering': '並び順',
+        'Row limit': '行の制限',
+        'Series limit': '系列の制限',
+        'Sort descending': '降順でソート',
+        'Sort ascending': '昇順でソート',
+        'Time Column': '時間列',
+        'Time Grain': '時間粒度',
+        'Time Range': '時間範囲',
+        'Time range': '時間範囲',
+        'Group by': 'グループ化',
+        'Query mode': 'クエリモード',
+        'Aggregate': '集計',
+        'Raw records': '生データ',
+        'Contribution': '貢献度',
+        'Show empty columns': '空の列を表示',
+        'Color Scheme': 'カラースキーム',
+        'Color scheme': 'カラースキーム',
+        'Show Legend': '凡例を表示',
+        'Show legend': '凡例を表示',
+        'Show Labels': 'ラベルを表示',
+        'Show labels': 'ラベルを表示',
+        'X Axis': 'X軸',
+        'X axis': 'X軸',
+        'Y Axis': 'Y軸',
+        'Y axis': 'Y軸',
+        'Chart Title': 'チャートタイトル',
+        'Description': '説明',
+        'Certified by': '認定者',
+        'Certification details': '認定詳細',
+        'Warning': '警告',
+        'Cache timeout': 'キャッシュタイムアウト',
+        'Annotation Layers': '注釈レイヤー',
+        'Annotation layers': '注釈レイヤー',
+        'Left Margin': '左マージン',
+        'Bottom Margin': '下マージン',
+        'Show Markers': 'マーカーを表示',
+        'Line interpolation': '線の補間',
+        'Stack': 'スタック',
+        'Normalize': '正規化',
+        'Bar Values': 'バーの値',
+        'Show Percentage': 'パーセンテージを表示',
+        'Rich Tooltip': 'リッチツールチップ',
+        'Truncate Metric': 'メトリックを切り捨て',
+        'Sort Bars': 'バーをソート',
+        
+        // Drop zone messages
+        'Drop columns here or click': 'ここに列をドロップまたはクリック',
+        'Drop a column here or click': 'ここに列をドロップまたはクリック',
+        'Drop temporal column here or click': 'ここに時間列をドロップまたはクリック',
+        'Drop a column/metric here or click': 'ここに列/メトリックをドロップまたはクリック',
+        'Drop column or metric here': 'ここに列またはメトリックをドロップ',
+        'Drop columns/metrics here or click': 'ここに列/メトリックをドロップまたはクリック',
+        'Drop a temporal column here or click': 'ここに時間列をドロップまたはクリック',
+        
+        // Section headers
+        'Query': 'クエリ',
+        'Data': 'データ',
+        'Customize': 'カスタマイズ',
+        'CUSTOMIZE': 'カスタマイズ',
+        'Advanced Analytics': '高度な分析',
+        'Chart Options': 'チャートオプション',
+        'Chart Type': 'チャートタイプ',
+        'Datasource & Chart Type': 'データソースとチャートタイプ',
+        
+        // Control labels
+        'Temporal Column': '時間列',
+        'Entity': 'エンティティ',
+        'Series': '系列',
+        'Breakdowns': '内訳',
+        'Breakdown': '内訳',
+        'Primary Metric': '主メトリック',
+        'Secondary Metric': '副メトリック',
+        'Linear Color Scheme': '線形カラースキーム',
+        'Table Options': 'テーブルオプション',
+        'Options': 'オプション',
+        'Layout': 'レイアウト',
+        'Style': 'スタイル',
+        'Number Format': '数値形式',
+        'Date Format': '日付形式',
+        'Currency Format': '通貨形式',
+        'Show Total': '合計を表示',
+        'Show Trend Line': 'トレンドラインを表示',
+        'Show Cell Bars': 'セルバーを表示',
+        'Conditional Formatting': '条件付き書式',
+        'Page Length': 'ページ長',
+        'Search Box': '検索ボックス',
+        'Emit Filter': 'フィルターを発行',
+        'Cell Padding': 'セルの余白',
+        'Cell Size': 'セルサイズ',
+        
+        // Buttons and actions
+        'Select a dimension': 'ディメンションを選択',
+        'Select a metric': 'メトリックを選択',
+        'Select one or more metrics': '1つ以上のメトリックを選択',
+        'Select one or more dimensions': '1つ以上のディメンションを選択',
+        'Click to edit': 'クリックして編集',
+        'Click to add': 'クリックして追加',
+        'Remove': '削除',
+        'Add': '追加',
+        'Edit': '編集',
+        'Apply': '適用',
+        'Cancel': 'キャンセル',
+        'Save': '保存',
+        'Run Query': 'クエリを実行',
+        'Update Chart': 'チャートを更新',
+        'Create Chart': 'チャートを作成',
+        'Run': '実行',
+        
+        // Theme menu
+        'Theme': 'テーマ',
+        'Light': 'ライト',
+        'Dark': 'ダーク',
+        'Match system': 'システムに合わせる',
+        
+        // Navigation and menu items
+        'Home': 'ホーム',
+        'Dashboards': 'ダッシュボード',
+        'Charts': 'チャート',
+        'Datasets': 'データセット',
+        'SQL Lab': 'SQL Lab',
+        'SQL Editor': 'SQLエディター',
+        'Saved Queries': '保存済みクエリ',
+        'Query History': 'クエリ履歴',
+        'Settings': '設定',
+        'Profile': 'プロフィール',
+        'Info': '情報',
+        'About': 'について',
+        'Logout': 'ログアウト',
+        'Login': 'ログイン',
+        'Sign in': 'サインイン',
+        'Sign up': 'サインアップ',
+        'Register': '登録',
+        
+        // Common labels
+        'Name': '名前',
+        'Type': 'タイプ',
+        'Owner': '所有者',
+        'Owners': '所有者',
+        'Created by': '作成者',
+        'Modified by': '更新者',
+        'Created on': '作成日',
+        'Modified on': '更新日',
+        'Last modified': '最終更新',
+        'Actions': 'アクション',
+        'Status': 'ステータス',
+        'Tags': 'タグ',
+        'Favorite': 'お気に入り',
+        'Favorites': 'お気に入り',
+        
+        // Table and list
+        'No records found': 'レコードが見つかりません',
+        'No data': 'データなし',
+        'Loading...': '読み込み中...',
+        'Loading': '読み込み中',
+        'Search...': '検索...',
+        'Search': '検索',
+        'Filter': 'フィルター',
+        'Clear': 'クリア',
+        'Reset': 'リセット',
+        'Refresh': '更新',
+        'Export': 'エクスポート',
+        'Import': 'インポート',
+        'Download': 'ダウンロード',
+        'Upload': 'アップロード',
+        'Delete': '削除',
+        'Duplicate': '複製',
+        'Copy': 'コピー',
+        'Paste': '貼り付け',
+        'Undo': '元に戻す',
+        'Redo': 'やり直し',
+        'Select all': 'すべて選択',
+        'Deselect all': '選択解除',
+        
+        // Confirmation and alerts
+        'Are you sure?': '本当によろしいですか？',
+        'Confirm': '確認',
+        'Yes': 'はい',
+        'No': 'いいえ',
+        'OK': 'OK',
+        'Success': '成功',
+        'Error': 'エラー',
+        'Failed': '失敗',
+        'Warning': '警告',
+        'Info': '情報',
+        
+        // Form labels
+        'Required': '必須',
+        'Optional': 'オプション',
+        'Submit': '送信',
+        'Close': '閉じる',
+        'Back': '戻る',
+        'Next': '次へ',
+        'Previous': '前へ',
+        'Finish': '完了',
+        'Done': '完了',
+        
+        // Chart specific
+        'Visualization Type': '可視化タイプ',
+        'Datasource': 'データソース',
+        'Chart Source': 'チャートソース',
+        'Results': '結果',
+        'Samples': 'サンプル',
+        'Preview': 'プレビュー',
+        'Full screen': 'フルスクリーン',
+        'Exit full screen': 'フルスクリーン終了',
+        'Share': '共有',
+        'Embed': '埋め込み',
+        'Download as image': '画像としてダウンロード',
+        'View query': 'クエリを表示',
+        'View results': '結果を表示',
+        'Force refresh': '強制更新',
+        
+        // SQL Lab
+        'Run query': 'クエリを実行',
+        'Run selection': '選択範囲を実行',
+        'Stop query': 'クエリを停止',
+        'Save query': 'クエリを保存',
+        'Copy to clipboard': 'クリップボードにコピー',
+        'Limit rows': '行数を制限',
+        'Cost estimate': 'コスト見積もり',
+        'Explore': '探索',
+        'Create View': 'ビューを作成',
+        
+        // Dashboard
+        'Add chart': 'チャートを追加',
+        'Add filter': 'フィルターを追加',
+        'Edit dashboard': 'ダッシュボードを編集',
+        'Save dashboard': 'ダッシュボードを保存',
+        'Discard changes': '変更を破棄',
+        'Publish': '公開',
+        'Unpublish': '非公開',
+        'Draft': '下書き',
+        'Published': '公開済み',
+        
+        // Filters
+        'Apply filters': 'フィルターを適用',
+        'Clear all': 'すべてクリア',
+        'Filter by': 'フィルター条件',
+        'Sort by': '並び替え',
+        'Ascending': '昇順',
+        'Descending': '降順',
+        
+        // Time related
+        'Last day': '過去1日',
+        'Last week': '過去1週間',
+        'Last month': '過去1ヶ月',
+        'Last quarter': '過去1四半期',
+        'Last year': '過去1年',
+        'Custom': 'カスタム',
+        'No filter': 'フィルターなし',
+        'Inherit dashboard time range': 'ダッシュボードの時間範囲を継承',
+        
+        // Misc
+        'None': 'なし',
+        'All': 'すべて',
+        'Any': '任意',
+        'Default': 'デフォルト',
+        'Auto': '自動',
+        'Manual': '手動',
+        'Enabled': '有効',
+        'Disabled': '無効',
+        'Active': 'アクティブ',
+        'Inactive': '非アクティブ',
+        'More': '詳細',
+        'Less': '少なく',
+        'Show more': 'もっと見る',
+        'Show less': '少なく表示',
+        'Expand': '展開',
+        'Collapse': '折りたたむ',
+        'Expand all': 'すべて展開',
+        'Collapse all': 'すべて折りたたむ'
+    };
+
+    function translateElement(element) {
+        if (!element || element.tagName === 'SCRIPT' || element.tagName === 'STYLE' || element.tagName === 'SVG') return;
+
+        var childNodes = element.childNodes;
+        for (var i = 0; i < childNodes.length; i++) {
+            var node = childNodes[i];
+            if (node.nodeType === Node.TEXT_NODE) {
+                var text = node.textContent;
+                var trimmed = text.trim();
+                if (trimmed && translations[trimmed]) {
+                    var leading = text.match(/^\s*/)[0];
+                    var trailing = text.match(/\s*$/)[0];
+                    node.textContent = leading + translations[trimmed] + trailing;
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                translateElement(node);
+            }
+        }
+
+        if (element.placeholder && translations[element.placeholder.trim()]) {
+            element.placeholder = translations[element.placeholder.trim()];
+        }
+        if (element.title && translations[element.title.trim()]) {
+            element.title = translations[element.title.trim()];
+        }
+        if (element.getAttribute) {
+            var ariaLabel = element.getAttribute('aria-label');
+            if (ariaLabel && translations[ariaLabel.trim()]) {
+                element.setAttribute('aria-label', translations[ariaLabel.trim()]);
+            }
+        }
+    }
+
+    var timeout = null;
+    function debouncedTranslate() {
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            if (document.body) translateElement(document.body);
+        }, 50);
+    }
+
+    var observer = new MutationObserver(function(mutations) {
+        var shouldTranslate = false;
+        for (var i = 0; i < mutations.length; i++) {
+            if (mutations[i].addedNodes.length > 0 || mutations[i].type === 'characterData') {
+                shouldTranslate = true;
+                break;
+            }
+        }
+        if (shouldTranslate) debouncedTranslate();
+    });
+
+    function init() {
+        console.log('[i18n-fix] Initializing runtime translation patch...');
+        if (document.body) translateElement(document.body);
+        observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+        console.log('[i18n-fix] Active. Translations: ' + Object.keys(translations).length);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        setTimeout(init, 100);
+    }
+
+    window.addEventListener('load', function() {
+        setTimeout(function() { if (document.body) translateElement(document.body); }, 500);
+        setTimeout(function() { if (document.body) translateElement(document.body); }, 1500);
+        setTimeout(function() { if (document.body) translateElement(document.body); }, 3000);
+    });
+})();
+</script>
