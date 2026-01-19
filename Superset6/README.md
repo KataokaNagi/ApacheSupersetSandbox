@@ -40,9 +40,23 @@ Apache Superset 6.0.0 の Docker Compose 環境構築です。ローカル開発
 
 ### 前提条件
 
-- Docker Desktop (Windows/Mac) または Docker Engine (Linux)
-- Docker Compose v2.x 以上
+- **Docker Desktop** (Windows/Mac) または **Podman Desktop** (Windows/Mac/Linux)
+- Docker Compose v2.x 以上（`docker compose` コマンド）
 - 最低 4GB RAM（推奨 8GB 以上）
+- **Windows**: Docker Desktop または Podman Desktop を起動しておく必要があります
+
+#### コンテナランタイムの選択
+
+このプロジェクトは **Docker Desktop** と **Podman Desktop** の両方に対応しています：
+
+**Docker Desktop**
+- インストール: https://www.docker.com/products/docker-desktop/
+- 起動後、自動的に検出されます
+
+**Podman Desktop（推奨：軽量・オープンソース）**
+- インストール: https://podman-desktop.io/downloads
+- 初回起動時に Podman machine を作成
+- スクリプトが自動的に Podman machine を起動します
 
 ### ローカル開発環境の起動
 
@@ -58,10 +72,20 @@ cd Superset6\scripts\development
 .\up.bat
 ```
 
+スクリプトが自動的に以下を実行します：
+- Docker Desktop または Podman Desktop を検出
+- Podman の場合、machine を自動起動
+- コンテナを起動
+
 または PowerShell で直接実行:
 
 ```powershell
 cd Superset6
+
+# Podman Desktop の場合（必要に応じて machine を起動）
+podman machine start
+
+# Docker Compose でビルド・起動（Docker/Podman 共通）
 docker compose --env-file env/.env.local --profile local up -d --build
 ```
 
@@ -200,7 +224,26 @@ docker compose --env-file env/.env.local exec superset superset db upgrade
 docker compose --env-file env/.env.local exec superset superset fab create-admin
 
 # サンプルデータ読み込み
-docker compose --env-file env/.env.local exec superset superset load_examples
+doc
+
+#### Podman 固有のトラブルシューティング
+
+```powershell
+# Podman machine の状態確認
+podman machine list
+
+# Podman machine の再起動
+podman machine stop
+podman machine start
+
+# Podman machine の削除と再作成（完全リセット）
+podman machine rm podman-machine-default
+podman machine init
+podman machine start
+
+# Docker エイリアスが動作しない場合、Podman を直接使用
+podman-compose --env-file env/.env.local --profile local up -d
+```ker compose --env-file env/.env.local exec superset superset load_examples
 ```
 
 ### トラブルシューティング

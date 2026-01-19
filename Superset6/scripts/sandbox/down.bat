@@ -1,6 +1,7 @@
 @echo off
 REM Apache Superset 6.0.0 - Sandbox環境停止
 REM Stop sandbox/testing environment
+REM Supports both Docker Desktop and Podman Desktop
 
 cd /d "%~dp0..\.."
 

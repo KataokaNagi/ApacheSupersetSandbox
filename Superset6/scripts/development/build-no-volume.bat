@@ -1,12 +1,29 @@
 @echo off
 REM Apache Superset 6.0.0 - ローカル開発環境ビルド（ボリュームなし）
 REM Build without volumes for clean start
+REM Supports both Docker Desktop and Podman Desktop
 
 cd /d "%~dp0..\.."
 
 echo ========================================
 echo Superset 6.0.0 Local Development Clean Build
 echo ========================================
+echo.
+echo Checking container runtime...
+
+REM Check if Podman machine is running (for Podman Desktop)
+podman machine inspect podman-machine-default >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo Using Podman Desktop
+    podman machine list | findstr "Running" >nul 2>&1
+    if %ERRORLEVEL% NEQ 0 (
+        echo Starting Podman machine...
+        podman machine start
+    )
+) else (
+    echo Using Docker Desktop
+)
+
 echo.
 echo WARNING: This will remove all volumes (data will be lost)!
 echo.

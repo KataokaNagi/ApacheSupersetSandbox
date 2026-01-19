@@ -1,13 +1,30 @@
 @echo off
 REM Apache Superset 6.0.0 - Azure本番環境ビルド
 REM Build for Azure production environment
+REM Supports both Docker Desktop and Podman Desktop
 
 cd /d "%~dp0..\.."
 
 echo ========================================
 echo Superset 6.0.0 Azure Production Build
 echo ========================================
+echo.
+echo Checking container runtime...
 
+REM Check if Podman machine is running (for Podman Desktop)
+podman machine inspect podman-machine-default >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo Using Podman Desktop
+    podman machine list | findstr "Running" >nul 2>&1
+    if %ERRORLEVEL% NEQ 0 (
+        echo Starting Podman machine...
+        podman machine start
+    )
+) else (
+    echo Using Docker Desktop
+)
+
+echo.
 docker compose --env-file env/.env.azure build
 
 if %ERRORLEVEL% EQU 0 (
