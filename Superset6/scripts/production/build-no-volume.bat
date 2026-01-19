@@ -77,7 +77,30 @@ echo Building images...
 if %ERRORLEVEL% EQU 0 (
     echo.
     echo Build completed successfully!
-    echo Volumes have been removed. Run 'up.bat' to start fresh.
+    echo.
+    echo Starting containers...
+    %CONTAINER_RUNTIME% compose --env-file env/.env.azure up -d
+    
+    if %ERRORLEVEL% EQU 0 (
+        echo.
+        echo ========================================
+        echo Superset is starting!
+        echo ========================================
+        echo.
+        echo Web UI will be available at:
+        echo   http://localhost:8088
+        echo.
+        echo Default credentials:
+        echo   Username: admin
+        echo   Password: admin
+        echo.
+        echo To view logs: %CONTAINER_RUNTIME% compose --env-file env/.env.azure logs -f
+        echo To stop:     %CONTAINER_RUNTIME% compose --env-file env/.env.azure down
+        echo.
+    ) else (
+        echo.
+        echo Failed to start containers! Check the error messages above.
+    )
 ) else (
     echo.
     echo Build failed! Check the error messages above.
