@@ -8,8 +8,27 @@ cd /d "%~dp0..\.."
 echo ========================================
 echo Stopping Superset 6.0.0 Sandbox
 echo ========================================
+echo.
 
-docker compose --env-file env/.env.local --profile local down
+REM Check if Podman is available
+podman --version >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    set CONTAINER_RUNTIME=podman
+    echo [INFO] Using Podman
+) else (
+    docker --version >nul 2>&1
+    if %ERRORLEVEL% EQU 0 (
+        set CONTAINER_RUNTIME=docker
+        echo [INFO] Using Docker
+    ) else (
+        echo [ERROR] Neither Docker nor Podman found!
+        pause
+        exit /b 1
+    )
+)
+
+echo.
+%CONTAINER_RUNTIME% compose --env-file env/.env.local --profile local down
 
 if %ERRORLEVEL% EQU 0 (
     echo.
