@@ -80,7 +80,15 @@ FEATURE_FLAGS = {
 }
 
 # ログ設定
-LOG_LEVEL = 'INFO'
+# Environment: development, staging, production
+ENV = os.getenv('ENV', 'development')
+
+# ログレベルを環境に応じて設定
+if ENV == 'production':
+    LOG_LEVEL = 'INFO'
+else:
+    LOG_LEVEL = 'DEBUG'
+
 ENABLE_PROXY_FIX = True
 
 # セキュリティ設定

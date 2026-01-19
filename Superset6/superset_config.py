@@ -169,6 +169,21 @@ SUPERSET_WEBSERVER_TIMEOUT = 60
 ENABLE_PROXY_FIX = True  # Required when behind a reverse proxy (Azure, nginx)
 
 # =============================================================================
+# Logging Configuration
+# =============================================================================
+# Environment: development, staging, production
+ENV = get_env_variable("ENV", "development")
+
+# ログレベルを環境に応じて設定
+if ENV == "production":
+    LOG_LEVEL = "INFO"
+else:
+    LOG_LEVEL = "DEBUG"
+
+LOG_FORMAT = "%(asctime)s:%(levelname)s:%(name)s:%(message)s"
+LOG_FILE = None  # Set to a path to enable file logging
+
+# =============================================================================
 # Security Configuration
 # =============================================================================
 # Content Security Policy
