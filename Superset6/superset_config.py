@@ -116,6 +116,8 @@ class CeleryConfig:
         "superset.tasks.thumbnails",
         "superset.tasks.cache",
     )
+    # Beat スケジュールファイルを書き込み可能なディレクトリに保存
+    beat_schedule_filename = "/app/superset_home/celerybeat-schedule"
     worker_prefetch_multiplier = 1
     task_acks_late = False
     task_annotations = {
